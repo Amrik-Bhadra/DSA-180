@@ -89,6 +89,22 @@ By checking before inserting, at the moment you're looking for 3's complement, o
 
 > Time Complexity: O(n²) | Space Complexity: O(1) | using nested loop
 
+```java
+public static int[] twoSumBruteForce(int[] arr, int target) {
+    for (int i = 0; i < arr.length; i++) {
+        for (int j = 0; j < arr.length; j++) {
+            if(i == j) continue;
+            
+            if(arr[j] + arr[i] == target) {
+                return new int[]{i, j};
+            }
+        }
+    }
+
+    return new int[]{};
+}
+```
+
 ### Solution 2 -- Optimal Solution
 
 > Time Complexity: O(n) | Space Complexity: O(n) | using HashMap
