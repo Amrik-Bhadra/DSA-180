@@ -136,7 +136,7 @@ Given an integer array nums, return true if any value appears at least twice in 
 
 - I am `storing array elements` in hashset
 - Nothing stored as value as not using hashmap
-- on each will check if `current array element already present` in hashset or not before inserting
+- on each pass will check if `current array element already present` in hashset or not before inserting
     - if true, means that element appears twice
     - if no, then insert that value in hashset
 
@@ -196,3 +196,106 @@ public static boolean containsDuplicateOptimised(int[] arr) {
 
 ---
 
+## Question 3: Valid Anagram
+
+> Strings, HashMap | Easy
+
+Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+
+### Asnwers for logic building questions
+- first check will be check if length of both strings are equal or not
+    - if not equal -> not anagram for sure
+- I am `storing array elements` in hashmap as Key
+- I am `storing frequencey` of character as Value
+- On each pass
+    - for string 1: 
+        - if character present, increase its frequency by 1
+        - if not then put in hashmap, with frequency = 1
+    - for string 2:
+        - if character present, decrease its frequency by 1
+        - if not then simply return ans "not anagram" / false
+
+- at end we will traverse the map, if for all characters freq = 0, "Its anagram"
+else not
+
+### Time Complexity and Space Complexity
+
+- Time Complexity: `O(n)`
+
+  > one pass to build/decrement the map (roughly 2n character operations), plus a final pass over the map to check all-zero.
+
+- Space Complexity: `O(n)`
+  > O(n) is a fair answer, but there's a nuance worth knowing for interviews: it depends on the constraints of the problem. If the strings are guaranteed to be lowercase English letters only (a very common constraint for this exact problem on LeetCode), then your map can hold at most 26 keys, no matter how long the string is. In that case the space is technically O(1) — bounded by a constant, not by input size. If the strings could contain arbitrary Unicode characters, then yes, O(n) in the worst case (or more precisely, O(k) where k = number of distinct characters, which could scale with n).
+
+  ### Sample I/O
+
+- Input: s = "anagram", t = "nagaram" ; Output: true
+- Input: s = "rat", t = "car" ; Output: false
+
+### SOLUTION 1 -- Optimal Solution using Hashmap
+
+> Time Complexity: O(n) | Space Complexity: O(n) | using HashMap
+
+```java
+public static boolean checkValidAnagram(String s, String t) {
+    if (s.length() != t.length())
+        return false;
+
+    HashMap<Character, Integer> mp = new HashMap<>();
+
+    // first string
+    for (int i = 0; i < s.length(); i++) {
+        if (mp.containsKey(s.charAt(i))) {
+            mp.put(s.charAt(i), mp.get(s.charAt(i)) + 1);
+        } else {
+            mp.put(s.charAt(i), 1);
+        }
+    }
+
+    // go for next string
+    for (int i = 0; i < t.length(); i++) {
+        if (mp.containsKey(t.charAt(i))) {
+            mp.put(t.charAt(i), mp.get(t.charAt(i)) - 1);
+        } else {
+            return false;
+        }
+    }
+
+    for (char ch : mp.keySet()) {
+        if (mp.get(ch) != 0)
+            return false;
+    }
+
+    return true;
+}
+```
+
+### Solution 2 -- Optimal Solution without Hashmap
+
+> Time Complexity: O(n) | Space Complexity: O(1) | using Array
+
+```java
+public static boolean checkValidAnagramOptimised(String s, String t) {
+    if (s.length() != t.length())
+        return false;
+
+    int[] ch = new int[26];
+
+    for (int i = 0; i < s.length(); i++) {
+        int index_s = s.charAt(i) - 'a';
+        ch[index_s]++;
+    }
+
+    for (int i = 0; i < t.length(); i++) {
+        int index_t = t.charAt(i) - 'a';
+        ch[index_t]--;
+    }
+
+    for (int i = 0; i < 26; i++) {
+        if (ch[i] != 0) return false;
+    }
+
+    return true;
+}
+```
+---
