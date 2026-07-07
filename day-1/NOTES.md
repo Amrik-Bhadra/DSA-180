@@ -299,3 +299,82 @@ public static boolean checkValidAnagramOptimised(String s, String t) {
 }
 ```
 ---
+
+## Question 4: Group Anagrams
+Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+
+> Strings, HashMap | Hashing (signature/frequency key) | Medium
+
+### Answers for logic building questions
+
+- I am storing a `signature` of each word as the key.
+- I am storing a `list of words` that share the same signature as the value.
+- On each pass, I create a signature for the current string by counting character frequencies.
+- If that signature already exists in the map, I add the current word to that existing group.
+- If it does not exist yet, I create a new group and place the word there.
+
+### Why this works
+Two strings are anagrams if they contain the same characters with the same frequencies.
+
+Example:
+- `eat` and `tea` both have the same frequency pattern: `a:1, e:1, t:1`
+- So they get the same signature and are grouped together.
+
+This is the core hashing idea: instead of comparing every string with every other string, we convert each string into a compact key and use that key to find matching groups instantly.
+
+### Time Complexity and Space Complexity
+
+- Time Complexity: `O(n * k)` in the usual counting approach, where `n` is the number of strings and `k` is the average length of each string.
+  - In this implementation, the signature creation uses `TreeMap`, so it is slightly more expensive than a plain array-based count, but the overall approach is still efficient.
+- Space Complexity: `O(n * k)` in the worst case, because we store all strings and their grouped lists.
+
+### Sample I/O
+- Input: strs = ["eat","tea","tan","ate","nat","bat"] ; Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+- Input: strs = [""] ; Output: [[""]]
+- Input: strs = ["a"] ; Output: [["a"]]
+
+### Solution
+
+```java
+// method to create a signature for a string
+// example: "street" --> "e2r1s1t2"
+public static String createSignature(String str) {
+    Map<Character, Integer> freqMap = new TreeMap<>();
+    for (char ch : str.toCharArray()) {
+        freqMap.put(ch, freqMap.getOrDefault(ch, 0) + 1);
+    }
+
+    StringBuilder sb = new StringBuilder();
+    for (char key : freqMap.keySet()) {
+        sb.append(key).append(freqMap.get(key));
+    }
+
+    return sb.toString();
+}
+```
+
+```java
+// method to return groups of anagrams
+public static List<List<String>> groupAnagrams(String[] strs) {
+    HashMap<String, List<String>> groupsMap = new HashMap<>();
+    for (int i = 0; i < strs.length; i++) {
+        String str = strs[i];
+        String signature = createSignature(str);
+
+        if (groupsMap.containsKey(signature)) {
+            groupsMap.get(signature).add(str);
+        } else {
+            List<String> newGroup = new ArrayList<>();
+            newGroup.add(str);
+            groupsMap.put(signature, newGroup);
+        }
+    }
+
+    List<List<String>> result = new ArrayList<>();
+    for (String key : groupsMap.keySet()) {
+        result.add(groupsMap.get(key));
+    }
+
+    return result;
+}
+```
